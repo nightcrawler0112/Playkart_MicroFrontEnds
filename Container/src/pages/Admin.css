@@ -1,0 +1,11 @@
+.custom-tabs .nav-link {
+    color: black; 
+  }
+  .table td {
+    vertical-align: middle; 
+    text-align: center; 
+  }
+  .table tr{
+    vertical-align: middle; 
+    text-align: center;
+  }

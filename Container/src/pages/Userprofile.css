@@ -1,0 +1,23 @@
+.my-orders-heading {
+    text-align: center;
+  }
+  
+
+  .order-item {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .order-item .col-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .user-img{
+
+    width:100px;
+    height:100px;
+    object-fit: contain;
+  }
