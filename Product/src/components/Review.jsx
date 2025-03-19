@@ -23,17 +23,17 @@ const Review = ({ review }) => {
     return stars;
   };
   return (
-    <div className="bg-light m-2">
+    <div className="bg-light mt-2">
       <div className="d-flex justify-content-between">
         <div className="d-flex gap-2 align-items-center p-2">
           <FaRegCircleUser size={30} />
           <b>{review?.userName}</b>
         </div>
-        <p>{renderStars(review?.rating)}</p>
+        <div className="align-items-center">{renderStars(review?.rating)}</div>
       </div>
-      <p className="fs-6 p-2 text-secondary">
+      <div className="fs-6 text-secondary p-2">
         <b>{review?.comment}</b>
-      </p>
+      </div>
     </div>
   );
 };

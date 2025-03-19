@@ -1,7 +1,6 @@
-.bg-image {
-    width: 100%;
-    height: 90vh; 
-    object-fit: contain;
-    margin: 0;
-    padding: 0;
+
+
+  .custom-carousel-image {
+    height: 650px; 
+    object-fit: cover; 
   }

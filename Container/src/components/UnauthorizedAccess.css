@@ -1,0 +1,10 @@
+.unauthorized-container {
+
+    height: 600px; 
+    background-color: #f8f9fa; 
+  }
+  
+  .unauthorized-image {
+    max-width: 50%; 
+    height: auto;
+  }

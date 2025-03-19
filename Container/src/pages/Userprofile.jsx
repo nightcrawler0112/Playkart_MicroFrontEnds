@@ -20,7 +20,6 @@ const Userprofile = () => {
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState({});
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
@@ -33,7 +32,6 @@ const Userprofile = () => {
         try {
           const decodedToken = jwtDecode(token);
           setIsAdmin(decodedToken.isAdmin);
-          console.log("Is Admin:", decodedToken.isAdmin);
 
           const response = await axios.get(
             "http://localhost:8080/user/profile",
@@ -42,7 +40,6 @@ const Userprofile = () => {
             }
           );
           setUser(response.data);
-          console.log("User profile:", response.data);
         } catch (err) {
           console.error("Error fetching user profile:", err);
         }
@@ -65,7 +62,6 @@ const Userprofile = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(response.data);
-        console.log("User orders:", response.data);
       } catch (err) {
         console.error("Error fetching user orders:", err);
       }
@@ -77,7 +73,6 @@ const Userprofile = () => {
     setUser({});
     setOrders([]);
     setUserView("Personal Information");
-    console.log("User logged out");
     navigate("/");
   };
 
@@ -122,7 +117,6 @@ const Userprofile = () => {
           }
         );
         setUser(response.data);
-        console.log("Updated user profile:", response.data);
         toast.success("Profile updated successfully!");
         setShowModal(false);
       } catch (err) {
@@ -149,17 +143,12 @@ const Userprofile = () => {
     setConfirmPassword(e.target.value);
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   const adminFunctionalities = () => {
     navigate("/admin");
   };
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-column">
-      <ToastContainer />
       <div className="d-flex flex-row gap-5 ">
         <div className="border border-dark rounded d-flex flex-column w-25 h-50 m-4 p-4 bg-white">
           <div role="button" onClick={getUserInfo}>
@@ -202,8 +191,8 @@ const Userprofile = () => {
                   alt="user"
                 ></img>
               </div>
-              <p className="m-2 mb-4 text-center">
-                Feel Free to edit any of the details so your account details are
+              <p className="m-2 mb-4 text-center fw-bold">
+                Feel free to edit any of the details so your account details are
                 up to date.
               </p>
               <div className="d-flex gap-3 align-items-center">
@@ -346,7 +335,7 @@ const Userprofile = () => {
                 <Form.Group controlId="formEditOldPassword">
                   <Form.Label>Old Password</Form.Label>
                   <Form.Control
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     name="oldPassword"
                     onChange={handleInputChange}
                   />
@@ -354,7 +343,7 @@ const Userprofile = () => {
                 <Form.Group controlId="formEditNewPassword">
                   <Form.Label>New Password</Form.Label>
                   <Form.Control
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     name="newPassword"
                     onChange={handleInputChange}
                   />
@@ -362,17 +351,12 @@ const Userprofile = () => {
                 <Form.Group controlId="formEditConfirmPassword">
                   <Form.Label>Confirm Password</Form.Label>
                   <Form.Control
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     name="confirmPassword"
-                    value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
                   />
                 </Form.Group>
-                <Button
-                  variant="link"
-                  onClick={toggleShowPassword}
-                  className="p-0"
-                ></Button>
+
                 {validationMessage && (
                   <div className="text-danger mt-2">{validationMessage}</div>
                 )}

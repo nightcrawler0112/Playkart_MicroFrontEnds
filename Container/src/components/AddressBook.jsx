@@ -4,6 +4,7 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaHome } from "react-icons/fa";
 
 const AddressBook = () => {
   const [address, setAddress] = useState([]);
@@ -34,7 +35,6 @@ const AddressBook = () => {
             }
           );
           setAddress(response.data);
-          console.log("User address:", response.data);
         } catch (err) {
           console.error("Error fetching user address:", err);
         }
@@ -87,7 +87,6 @@ const AddressBook = () => {
             }
           );
           setAddress([...address, response.data]);
-          console.log("Added new address:", response.data);
           toast.success("Address added successfully!");
         }
         setShowModal(false);
@@ -117,7 +116,6 @@ const AddressBook = () => {
           }
         );
         setAddress(address.filter((addr) => addr.id !== id));
-        console.log("Deleted address:", response.data);
         toast.success("Address deleted successfully!");
       } catch (err) {
         console.error("Error deleting address:", err);
@@ -128,37 +126,45 @@ const AddressBook = () => {
 
   return (
     <div>
-      <ToastContainer />
-      <p className="m-4 fs-3 text-center">
+      <p className="m-4 fs-3 text-center d-flex flex-column align-items-center gap-3">
         <b>My Addresses </b>
+        <FaHome size={50} />
       </p>
       <div className="m-4">
-        {address.map((addr, index) => (
-          <div key={index}>
-            <hr />
-            <div className="d-flex flex-row justify-content-between">
-              <h5>
-                Address {index + 1} : {addr.street}, {addr.city}, {addr.state},{" "}
-                {addr.zipCode}
-              </h5>
-              <MdDelete
-                role="button"
-                size={28}
-                onClick={() => deleteAddress(addr.id)}
-              />
+        {address.length === 0 ? (
+          <p className="text-center fs-5 fw-bold text-muted">
+            No Addresses Present
+          </p>
+        ) : (
+          address.map((addr, index) => (
+            <div key={index}>
+              <hr />
+              <div className="d-flex flex-row justify-content-between">
+                <h5>
+                  Address {index + 1} : {addr.street}, {addr.city}, {addr.state}
+                  , {addr.zipCode}
+                </h5>
+                <MdDelete
+                  role="button"
+                  size={28}
+                  onClick={() => deleteAddress(addr.id)}
+                />
+              </div>
+              <hr />
             </div>
-            <hr />
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      <Button
-        className="w-25"
-        variant="dark m-4"
-        onClick={handleAddAddressClick}
-      >
-        Add New Address
-      </Button>
+      <div className="d-flex justify-content-center">
+        <Button
+          className="w-25"
+          variant="dark m-2"
+          onClick={handleAddAddressClick}
+        >
+          Add New Address
+        </Button>
+      </div>
 
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
@@ -167,7 +173,9 @@ const AddressBook = () => {
         <Modal.Body>
           <Form>
             <Form.Group controlId="formAddStreet">
-              <Form.Label>Street</Form.Label>
+              <Form.Label>
+                <b>Street *</b>
+              </Form.Label>
               <Form.Control
                 type="text"
                 name="street"
@@ -180,7 +188,9 @@ const AddressBook = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formAddCity">
-              <Form.Label>City</Form.Label>
+              <Form.Label>
+                <b>City *</b>
+              </Form.Label>
               <Form.Control
                 type="text"
                 name="city"
@@ -193,7 +203,9 @@ const AddressBook = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formAddState">
-              <Form.Label>State</Form.Label>
+              <Form.Label>
+                <b>State *</b>
+              </Form.Label>
               <Form.Control
                 type="text"
                 name="state"
@@ -206,7 +218,9 @@ const AddressBook = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formAddZipCode">
-              <Form.Label>Zip Code</Form.Label>
+              <Form.Label>
+                <b>Zip Code *</b>
+              </Form.Label>
               <Form.Control
                 type="text"
                 name="zipCode"

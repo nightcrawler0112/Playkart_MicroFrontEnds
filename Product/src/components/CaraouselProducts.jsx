@@ -10,8 +10,8 @@ const CaraouselProducts = ({ products = [] }) => {
   });
 
   return (
-    <div className="d-flex flex-row p-2 gap-3 overflow-auto">
-      {sortedProducts.slice(0, 5).map((product) => (
+    <div className="d-flex flex-row p-2 gap-3 overflow-auto m-2">
+      {sortedProducts.slice(0, 4).map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
     </div>

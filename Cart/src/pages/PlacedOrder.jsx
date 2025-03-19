@@ -21,7 +21,6 @@ const PlacedOrder = () => {
             }
           );
           setOrder(response.data);
-          console.log("Order details:", response.data);
         } catch (error) {
           console.error("Error fetching order details:", error);
           toast.error(
@@ -43,9 +42,8 @@ const PlacedOrder = () => {
 
   return (
     <div className="container mt-5">
-      <ToastContainer />
       <h2>Order Details: </h2>
-      <div className="border p-3 mb-3 rounded d-flex justify-content-between">
+      <div className="border p-3 mb-3 rounded d-flex justify-content-between bg-light">
         <div>
           <p>
             <strong>Order ID:</strong> {order.orderId}

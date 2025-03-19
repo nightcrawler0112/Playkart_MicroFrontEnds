@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Form } from "react-bootstrap";
 import "./CartItem.css";
+import prodImg from "../images/bat.jpg";
 
 const CartItem = ({ item, onRemove, onUpdate, showButtons = true }) => {
   const [quantity, setQuantity] = useState(item?.quantity);
@@ -30,13 +31,11 @@ const CartItem = ({ item, onRemove, onUpdate, showButtons = true }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("Updated item quantity in cart:", item?.cartItemId);
       toast.success("Item quantity updated successfully", {
         autoClose: 3000,
       });
       onUpdate();
     } catch (error) {
-      console.log("Error updating item quantity in cart:", error);
       toast.error(
         error.response.data.message || "Error updating item quantity in cart",
         {
@@ -47,7 +46,7 @@ const CartItem = ({ item, onRemove, onUpdate, showButtons = true }) => {
   };
 
   const debouncedUpdateCartItem = useCallback(
-    debounce(updateCartItem, 5000),
+    debounce(updateCartItem, 2000),
     []
   );
 
@@ -69,7 +68,6 @@ const CartItem = ({ item, onRemove, onUpdate, showButtons = true }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("Removed item from cart:", cartItemId);
       onRemove(cartItemId);
       toast.success("Item removed from cart successfully", {
         autoClose: 3000,
@@ -102,14 +100,16 @@ const CartItem = ({ item, onRemove, onUpdate, showButtons = true }) => {
   return (
     <div className="card p-2 m-2 w-100 h-25">
       <div className="d-flex flex-row gap-4 align-items-center bg-light">
-        <div className="w-25 ">
+        <div className="w-25">
           <img
-            src={item?.imageUrl}
+            src={item?.imageUrl || prodImg}
             alt={item.productName}
-            className="cart-item-image h-50"
+            className="cart-item-image  p-2"
+            style={{ width: "100%", height: "100%" }}
           />
         </div>
-        <div className="m-2 col-6">
+        <div></div>
+        <div className="ml-4 m-2 col-6">
           <h3>{item?.productName || item?.name}</h3>
           <h4 className="text-danger"> ₹{price}</h4>
           <div className="d-flex flex-row gap-4">

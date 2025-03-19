@@ -6,12 +6,14 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Admin.css";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
-
+import UnauthorizedAccess from "../components/UnauthorizedAccess";
+import { jwtDecode } from "jwt-decode";
 const Admin = () => {
   const [key, setKey] = useState("users");
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -25,9 +27,17 @@ const Admin = () => {
   const [editProduct, setEditProduct] = useState(null);
 
   useEffect(() => {
-    fetchUsers();
-    fetchProducts();
-    fetchOrders();
+    const token = localStorage.getItem("token");
+
+    if (token !== null) {
+      const decodedToken = jwtDecode(token);
+      setIsAdmin(decodedToken.isAdmin);
+      if (decodedToken.isAdmin) {
+        fetchUsers();
+        fetchProducts();
+        fetchOrders();
+      }
+    }
   }, []);
 
   const fetchUsers = async () => {
@@ -37,8 +47,7 @@ const Admin = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const nonAdminUsers = response.data.filter((user) => !user.admin);
-      setUsers(nonAdminUsers);
+      setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast.error("Error fetching users");
@@ -65,7 +74,6 @@ const Admin = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(response.data);
-      console.log("Orders:", response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
       toast.error("Error fetching orders");
@@ -145,7 +153,7 @@ const Admin = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.patch(
+      await axios.put(
         `http://localhost:8081/products/${editProduct.id}`,
         editProduct,
         {
@@ -157,7 +165,13 @@ const Admin = () => {
       fetchProducts();
     } catch (error) {
       console.error("Error updating product:", error);
-      toast.error("Error updating product");
+      toast.error(
+        error.response.data.price ||
+          error.response.data.stock ||
+          error.response.data.name ||
+          error.response.data.description ||
+          "Error updating product"
+      );
     }
   };
 
@@ -169,9 +183,12 @@ const Admin = () => {
     }));
   };
 
+  if (!isAdmin) {
+    return <UnauthorizedAccess />;
+  }
+
   return (
     <div className="container mt-5">
-      <ToastContainer />
       <h1 className="m-1 p-2 mb-4">Admin Functionalities</h1>
       <Tabs
         activeKey={key}
@@ -185,6 +202,7 @@ const Admin = () => {
                 <th>User Name</th>
                 <th>Email</th>
                 <th>Phone Number</th>
+                <th>Role</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -194,11 +212,13 @@ const Admin = () => {
                   <td>{user.name}</td>
                   <td>{user.email}</td>
                   <td>{user.phoneNumber}</td>
+                  <td>{user.admin ? "Admin" : "Customer"}</td>{" "}
                   <td className="make-admin-btn">
                     <Button
                       variant="dark"
                       onClick={() => handleMakeAdmin(user.email)}
                       className="m-2"
+                      disabled={user.admin}
                     >
                       Make Admin
                     </Button>
@@ -252,7 +272,7 @@ const Admin = () => {
             </Form.Group>
             <Form.Group controlId="formProductGender">
               <Form.Label>
-                <b>Gender</b>
+                <b>Gender *</b>
               </Form.Label>
               <Form.Select
                 value={newProduct.gender}
@@ -399,7 +419,6 @@ const Admin = () => {
         </Tab>
       </Tabs>
 
-      {/* Edit Product Modal */}
       {editProduct && (
         <Modal show={true} onHide={() => setEditProduct(null)}>
           <Modal.Header closeButton>

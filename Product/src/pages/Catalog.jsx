@@ -50,7 +50,6 @@ const Catalog = () => {
         }
 
         if (response) {
-          console.log("Fetched products:", response.data);
           setProducts(response.data);
         }
       } catch (error) {
@@ -65,7 +64,6 @@ const Catalog = () => {
   const handleCloseOffcanvas = () => setShowOffcanvas(false);
 
   const handleApplyFilters = (filters) => {
-    console.log("Applying filters:", filters);
     const fetchFilteredProducts = async () => {
       try {
         const response = await axios.post(
@@ -79,7 +77,6 @@ const Catalog = () => {
         );
 
         if (response) {
-          console.log("Fetched products:", response.data);
           setProducts(response.data);
         }
       } catch (error) {
@@ -93,7 +90,7 @@ const Catalog = () => {
   return (
     <Container>
       <div className="d-flex flex-row justify-content-between align-items-center">
-        <h1 className="m-2">{heading}</h1>
+        <h1>{heading}</h1>
         <div
           className="m-4 p-2 border border-dark rounded"
           onClick={handleShowOffcanvas}

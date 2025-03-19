@@ -23,7 +23,6 @@ const Login = () => {
         password,
       });
       const token = response.data.token;
-      console.log("Token:", token);
       login(token);
       toast.success("Login successful!", {
         autoClose: 3000,
@@ -75,20 +74,19 @@ const Login = () => {
 
             {error && <div className="text-danger mb-3">{error}</div>}
 
-            <Button variant="secondary" type="submit" className="w-100">
+            <Button variant="secondary" type="submit" className="w-100 ">
               Login
             </Button>
 
-            <div className="d-flex m-2 mt-4">
-              <h6>Not a Member?</h6>
+            <div className="d-flex mt-2 fs-6 fw-bold">
+              Not a Member?
               <a href="/signup" className="ms-2">
-                <b>Sign Up</b>
+                Sign Up
               </a>
             </div>
           </Form>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

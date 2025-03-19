@@ -80,6 +80,8 @@ module.exports = (_, argv) => ({
         "./Catalog": "./src/pages/Catalog.jsx",
         "./PDP": "./src/pages/PDP.jsx",
         "./CaraouselProducts": "./src/components/CaraouselProducts.jsx"
+
+        
       },
       shared: {
         ...deps,

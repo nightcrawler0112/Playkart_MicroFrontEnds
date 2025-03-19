@@ -65,27 +65,27 @@ const Navbar = () => {
         </Col>
         <Col></Col>
 
-        <Col>
+        <Col className="text-center">
           <h6 role="button" onClick={() => handleGenderClick("Men")}>
             MEN
           </h6>
         </Col>
-        <Col>
+        <Col className="text-center">
           <h6 role="button" onClick={() => handleGenderClick("Women")}>
             WOMEN
           </h6>
         </Col>
-        <Col>
+        <Col className="text-center">
           <h6 role="button" onClick={() => handleGenderClick("Kids")}>
             KIDS
           </h6>
         </Col>
-        <Col>
+        <Col className="text-center">
           <h6 role="button" onClick={() => handleCategoryClick("SportsWears")}>
             WEARS
           </h6>
         </Col>
-        <Col>
+        <Col className="text-center">
           <h6
             role="button"
             onClick={() => handleCategoryClick("SportsEquipments")}
@@ -105,7 +105,7 @@ const Navbar = () => {
             />
             <Button
               onClick={handleSearchButton}
-              className="btn-custom bg-dark align-items-center mb-2"
+              className="d-flex btn-custom bg-dark align-items-center mb-2"
             >
               <FaMagnifyingGlass />
             </Button>
@@ -113,20 +113,24 @@ const Navbar = () => {
           <Col></Col>
         </Col>
         <Col>
-          <FaUserCircle
-            role="button"
-            className="mb-2"
-            size={32}
-            onClick={handleUserProfile}
-          />
+          {isLoggedIn && (
+            <FaUserCircle
+              role="button"
+              className="mb-2"
+              size={32}
+              onClick={handleUserProfile}
+            />
+          )}
         </Col>
         <Col>
-          <FaShoppingCart
-            role="button"
-            size={32}
-            className="icons mb-2"
-            onClick={getUserCart}
-          />
+          {isLoggedIn && (
+            <FaShoppingCart
+              role="button"
+              size={32}
+              className="icons mb-2"
+              onClick={getUserCart}
+            />
+          )}
         </Col>
         <Col>
           {isLoggedIn ? (
@@ -140,7 +144,6 @@ const Navbar = () => {
           )}
         </Col>
       </Row>
-      <ToastContainer />
     </Container>
   );
 };

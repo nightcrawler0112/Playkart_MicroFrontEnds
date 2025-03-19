@@ -1,33 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./ProductCard.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
-  const [ratingData, setRatingData] = useState({
-    averageRating: null,
-    reviewCount: 0,
-  });
-
-  // useEffect(() => {
-  //   const fetchRating = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:8081/reviews/product/${product.id}/rating`
-  //       );
-  //       setRatingData({
-  //         averageRating: response.data.averageRating,
-  //         reviewCount: response.data.reviewCount,
-  //       });
-  //     } catch (error) {
-  //       console.error(error.message || "Error fetching product rating:", error);
-  //     }
-  //   };
-
-  //   fetchRating();
-  // }, [product.id]);
 
   const handleProductClick = () => {
     navigate(`/product/${product.id}`);
@@ -60,26 +37,37 @@ const ProductCard = ({ product }) => {
         className="card-img-top bg-light"
         alt={product?.name}
       />
-      <div className="card-body">
-        <h5 className="card-text text-danger">₹ {product?.price}</h5>
-        <h5 className="card-title">{product?.name}</h5>
-        <h6 className="card-text text-muted">{product?.category}</h6>
-        {product?.reviewCount !== 0 ? (
-          <div className="card-text text-muted">
-            <div className="d-flex align-items-center m-2">
+      <div className="card-body ">
+        {product?.stock === 0 ? (
+          <div className="border border-dark text-center rounded bg-danger text-white  pb-1">
+            Out of Stock
+          </div>
+        ) : (
+          <div className="card-text text-danger text-center fs-5">
+            <b>₹ {product?.price}</b>
+          </div>
+        )}
+
+        <h5 className="card-title text-center">{product?.name}</h5>
+        <h6 className="card-text text-muted text-center">
+          {product?.category}
+        </h6>
+        {product?.reviewCount ? (
+          <div className="d-flex card-text text-muted justify-content-center">
+            <div className="d-flex align-items-center ">
               {renderStars(product?.averageRating)}
               <span className="ms-2">({product?.reviewCount} reviews)</span>
             </div>
           </div>
         ) : (
-          <div className="card-text text-muted">
-            <div className="d-flex align-items-center m-2">
+          <div className="d-flex card-text text-muted justify-content-center">
+            <div className="d-flex align-items-center ">
               {renderStars(0)}
-              <span className="ms-2">({0} reviews)</span>
+              <span className="ms-2">(0 reviews)</span>
             </div>
           </div>
         )}
-        <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-center mt-2">
           <div className="btn btn-primary bg-dark" onClick={handleProductClick}>
             View product
           </div>

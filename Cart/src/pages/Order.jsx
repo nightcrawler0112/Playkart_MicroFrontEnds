@@ -6,7 +6,7 @@ import logo from "../images/logo.png";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddressBook from "../components/AddressBook.jsx";
-import CartItem from "../components/Cartitem";
+import CartItem from "../components/Cartitem.jsx";
 
 const Order = () => {
   const [cart, setCart] = useState([]);
@@ -31,7 +31,6 @@ const Order = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);
-        console.log("User details:", response.data);
       } catch (error) {
         console.error("Error fetching user details:", error);
         toast.error(
@@ -50,7 +49,6 @@ const Order = () => {
           }
         );
         setAddresses(response.data);
-        console.log("User addresses:", response.data);
       } catch (error) {
         console.error("Error fetching addresses:", error);
         toast.error(error.response.data.message || "Error fetching addresses");
@@ -93,6 +91,9 @@ const Order = () => {
     fetchAddresses();
   }, [location.search]);
 
+  const handleAddressAdded = (newAddress) => {
+    setAddresses((prevAddresses) => [...prevAddresses, newAddress]);
+  };
   const handleAddressChange = (e) => {
     const addressIndex = e.target.value;
     setSelectedAddress(addresses[addressIndex]);
@@ -114,7 +115,6 @@ const Order = () => {
         }
       );
 
-      console.log("Order placed:", response.data);
       toast.success("Order placed successfully");
       navigate("/order-confirmation");
     } catch (error) {
@@ -145,7 +145,6 @@ const Order = () => {
         }
       );
 
-      console.log("Order placed:", response.data);
       toast.success("Order placed successfully");
       navigate("/order-confirmation");
     } catch (error) {
@@ -154,13 +153,22 @@ const Order = () => {
     }
   };
 
+  const navigateHomepage = () => {
+    navigate("/");
+  };
+
   return (
     <div>
-      <ToastContainer />
       <div className="container">
         <div className="row">
           <div className="col-2">
-            <img src={logo} alt="logo" className="img-fluid w-75" />
+            <img
+              src={logo}
+              alt="logo"
+              className="img-fluid w-75"
+              role="button"
+              onClick={navigateHomepage}
+            />
           </div>
         </div>
         <div className="row d-flex justify-content-center align-items-center">
@@ -181,20 +189,21 @@ const Order = () => {
             </div>
 
             <div className="d-flex flex-row justify-content-between">
-              <AddressBook />
+              <AddressBook onAddressAdded={handleAddressAdded} />
             </div>
-
             <div className="row">
-              <div className="col-6 m-4 p-2">
+              <div className="col-12 m-4 p-2">
                 <h3>Choose Address :</h3>
-                <Form.Control as="select" onChange={handleAddressChange}>
-                  <option value="">Select Address</option>
-                  {addresses.map((address, index) => (
-                    <option key={index} value={index}>
-                      Address {index + 1}
-                    </option>
-                  ))}
-                </Form.Control>
+                <div className="col-6">
+                  <Form.Control as="select" onChange={handleAddressChange}>
+                    <option value="">Select Address</option>
+                    {addresses.map((address, index) => (
+                      <option key={index} value={index}>
+                        Address {index + 1}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </div>
                 {selectedAddress && (
                   <div>
                     <div className="mt-3">

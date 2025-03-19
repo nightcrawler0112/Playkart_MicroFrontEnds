@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import "./UserCart.css";
 import OrderSummary from "../components/OrderSummary";
-import CaraouselProducts from "mf_product/CaraouselProducts";
 
 const UserCart = () => {
   const [cart, setCart] = useState([]);
@@ -26,7 +25,6 @@ const UserCart = () => {
       });
       setCart(response.data.cartItems);
       setTotalPrice(response.data.totalPrice);
-      console.log("Fetched cart:", response.data);
     } catch (error) {
       console.error("Error fetching cart:", error);
       toast.error(error.response.data.message || "Error fetching cart");
@@ -55,8 +53,6 @@ const UserCart = () => {
 
   return (
     <div className="container">
-      <ToastContainer />
-
       {cart.length === 0 ? (
         <div className="d-flex flex-column gap-4 m-4 p-2 align-items-center">
           <h1>Your cart is empty</h1>
@@ -70,7 +66,7 @@ const UserCart = () => {
         </div>
       ) : (
         <div>
-          <div className="d-flex flex-row gap-4">
+          <div className="d-flex flex-row ">
             <div className="w-50 m-2 p-2">
               <div className="p-3">
                 <h1>Your Bag :</h1>

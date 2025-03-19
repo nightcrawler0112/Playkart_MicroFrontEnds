@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ProductCard from "./ProductCard.jsx";
+import "./Caraousel.css";
 import { Button, Carousel } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import CaraouselProducts from "./CaraouselProducts.jsx";
@@ -19,7 +19,6 @@ const Caraousel = () => {
         const response = await axios.get(
           `http://localhost:8081/products/category/${category}`
         );
-        console.log("Fetched products:", response.data);
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -31,31 +30,32 @@ const Caraousel = () => {
 
   return (
     <div>
-      <p className="m-2 p-2 fs-2">
-        <b>WHAT'S HOT?</b>
+      <p className="m-2 p-2 pt-4 fs-2 pt-4">
+        <h2 className="carousel-header">WHAT'S HOT?</h2>
       </p>
-      <div className="d-flex flex-row p-2 gap-3 position-relative">
+      <div className="d-flex flex-row p-2 gap-3 position-relative align-items-center text-center ">
         <Button
-          className="m-2 fw-bold fs-4"
+          className="m-2 fw-bold fs-5 col-2"
           variant="light"
           onClick={() => setCategory("SportsWears")}
         >
           Clothes
         </Button>
         <Button
-          className="m-2 fw-bold fs-4"
+          className="m-2 fw-bold fs-5 col-2 "
           variant="light"
           onClick={() => setCategory("SportsEquipments")}
         >
           Equipments
         </Button>
-
-        <div className="m-4 fs-4 position-absolute end-0">
+        <div className="col-5"></div>
+        <div className=" pt-2 mt-2 fs-5 col-2 fw-bold">
           <u role="button" onClick={handleSeeAllClick}>
-            See All
+            <p>View All</p>
           </u>
         </div>
       </div>
+
       <CaraouselProducts products={products} />
     </div>
   );

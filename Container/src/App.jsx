@@ -6,8 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from "./components/Layout.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import { ToastContainer } from "react-toastify";
 
-// Lazy load components
 const Homepage = lazy(() => import("./pages/Homepage.jsx"));
 const Catalog = lazy(() => import("mf_product/Catalog"));
 const PDP = lazy(() => import("mf_product/PDP"));
@@ -142,7 +142,12 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer autoClose={3000} />
+    </>
+  );
 };
 
 const rootElement = document.getElementById("app");

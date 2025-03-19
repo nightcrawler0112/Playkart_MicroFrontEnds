@@ -37,10 +37,9 @@ const Register = () => {
         password: formData.password,
       });
       const token = response.data.body.token;
-      console.log("Token:", token);
       login(token);
       toast.success("Registration successful!", {
-        autoClose: 3000,
+        autoClose: 2000,
       });
       navigate("/");
     } catch (err) {
@@ -129,16 +128,15 @@ const Register = () => {
               Register
             </Button>
 
-            <div className="d-flex m-2 mt-4">
-              <h6>Already a Member?</h6>
+            <div className="d-flex mt-2 fs-6 fw-bold">
+              Already a Member?
               <a href="/login" className="ms-2">
-                <b>Login</b>
+                Login
               </a>
             </div>
           </Form>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

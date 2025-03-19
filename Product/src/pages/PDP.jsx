@@ -31,21 +31,11 @@ const ProductDetails = () => {
         const response = await axios.get(
           `http://localhost:8081/products/${location.pathname.split("/")[2]}`
         );
-        console.log("Fetched product:", response.data);
-        setProduct(response.data);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
+        const productData = response.data;
 
-    const fetchRatingAndReviews = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8081/reviews/product/${
-            location.pathname.split("/")[2]
-          }`
-        );
-        const reviews = response.data;
+        setProduct(productData);
+
+        const reviews = productData.userReviews || [];
         const reviewCount = reviews.length;
         const averageRating =
           reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount;
@@ -55,25 +45,25 @@ const ProductDetails = () => {
           reviewCount,
           reviews,
         });
-
-        console.log("Fetched product rating and reviews:", response.data);
       } catch (error) {
-        console.error("Error fetching product rating and reviews:", error);
+        console.error("Error fetching product:", error);
       }
     };
 
     const checkUserHasOrdered = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get(
-          `http://localhost:8082/order/product/${
-            location.pathname.split("/")[2]
-          }`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setHasOrdered(response.data);
+        if (token) {
+          const response = await axios.get(
+            `http://localhost:8082/order/product/${
+              location.pathname.split("/")[2]
+            }`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setHasOrdered(response.data);
+        }
       } catch (error) {
         console.error("Error checking if user has ordered the product:", error);
       }
@@ -82,17 +72,21 @@ const ProductDetails = () => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get("http://localhost:8080/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(response.data);
+        if (token) {
+          const response = await axios.get(
+            "http://localhost:8080/user/profile",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setUser(response.data);
+        }
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
     };
 
     fetchProduct();
-    fetchRatingAndReviews();
     checkUserHasOrdered();
     fetchUserProfile();
   }, [location.pathname]);
@@ -151,12 +145,14 @@ const ProductDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("Added to cart:", response.data);
       toast.success("Item added to cart successfully", {
         autoClose: 3000,
       });
     } catch (error) {
-      if (error.response.status === 401) {
+      if (
+        error.response.data.message ===
+        "JWT strings must contain exactly 2 period characters. Found: 0"
+      ) {
         toast.error("Login first to add to cart", {
           autoClose: 3000,
         });
@@ -170,7 +166,12 @@ const ProductDetails = () => {
   };
 
   const handleBuyNow = () => {
-    navigate(`/order?productId=${product.id}&quantity=${quantity}`);
+    const token = localStorage.getItem("token");
+    if (token === null) {
+      toast.error("Login first to buy product", {
+        autoClose: 3000,
+      });
+    } else navigate(`/order?productId=${product.id}&quantity=${quantity}`);
   };
 
   const renderStars = (rating) => {
@@ -239,15 +240,14 @@ const ProductDetails = () => {
   );
 
   return (
-    <div>
-      <ToastContainer />
+    <div className="container">
       <div className="d-flex flex-row">
         <img
           className="product-image m-2 p-2"
           src={product?.imageURL}
           alt={product?.name}
         />
-        <div>
+        <div className="container">
           <div className="d-flex flex-row gap-3  m-2 w-100">
             <h5 className="text-muted m-2">{product?.gender} </h5>
             <h5 className="text-muted m-2">{product?.category}</h5>
@@ -261,15 +261,25 @@ const ProductDetails = () => {
           <h2 className="m-2 p-2">
             <b>{product?.name}</b>
           </h2>
-          <h5 className="m-2 p-2">Brand: {product?.brand}</h5>
-          <div className="m-2 pt-3 d-flex flex-row">
-            <h5 className="text-muted p-2 ">MRP : </h5>
+          <div>
+            {product?.stock === 0 && (
+              <div className="border border-dark text-center rounded bg-danger text-white m-3">
+                Out of Stock
+              </div>
+            )}
+          </div>
+          <div className="d-flex flex-row m-2">
+            <h5 className="ml-2 p-2">Brand : </h5>
+            <h5 className=" p-2">{product?.brand}</h5>
+          </div>
+          <div className="m-2  d-flex flex-row">
+            <h5 className="p-2 ">MRP : </h5>
             <h5 className="p-2">
               <b className="text-danger"> ₹ {product?.price} </b>
             </h5>
             <h5 className="text-muted p-2"> [Inclusive of all taxes]</h5>
           </div>
-          <p className="p-2 m-2">
+          <p className="p-2 m-2 text-secondary">
             <b>{product?.description}</b>
           </p>
           <div className="m-2 p-2 d-flex flex-row gap-2 align-items-center">
@@ -283,25 +293,44 @@ const ProductDetails = () => {
             />
           </div>
           <div className="p-2">
-            <Button
-              variant="secondary"
-              className="m-2 p-2"
-              onClick={() => addItemtoCart(product.id, quantity)}
-            >
-              Add to cart
-              <FaCartPlus style={{ marginLeft: "8px" }} />
-            </Button>
-            <Button
-              variant="secondary"
-              className="m-2 p-2"
-              onClick={handleBuyNow}
-            >
-              Buy Now
-              <GiShoppingBag style={{ marginLeft: "8px" }} />
-            </Button>
+            {product?.stock !== 0 ? (
+              <div>
+                <Button
+                  variant="dark"
+                  className="m-2 p-2"
+                  onClick={() => addItemtoCart(product.id, quantity)}
+                >
+                  Add to cart
+                  <FaCartPlus style={{ marginLeft: "8px" }} />
+                </Button>
+                <Button
+                  variant="dark"
+                  className="m-2 p-2 align-items-center"
+                  onClick={handleBuyNow}
+                >
+                  Buy Now
+                  <GiShoppingBag style={{ marginLeft: "8px" }} />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button variant="secondary" className="m-2 p-2" disabled>
+                  Add to cart
+                  <FaCartPlus style={{ marginLeft: "8px" }} />
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="m-2 p-2 align-items-center"
+                  disabled
+                >
+                  Buy Now
+                  <GiShoppingBag style={{ marginLeft: "8px" }} />
+                </Button>
+              </div>
+            )}
           </div>
-          <div className="p-2 m-2 fs-4">
-            <b>{ratingData.reviews.length > 0 ? "Reviews" : ""}</b>
+          <div className="p-2 m-2 fs-4 container h-25">
+            <h4>{ratingData.reviews.length > 0 ? " Reviews" : ""}</h4>
             <div>
               {ratingData.reviews.map((review, index) => (
                 <div key={index} className="review">
@@ -310,37 +339,42 @@ const ProductDetails = () => {
               ))}
             </div>
             {hasOrdered && !userHasReview && (
-              <div className="mt-4 p-2">
-                <h5>Add a Review</h5>
+              <div className="mt-4 p-2 fs-4 border border-dark bg-light rounded">
+                <u className=" p-2">
+                  <b>Your Review</b>
+                </u>
+
                 <Form onSubmit={handleSubmitReview}>
-                  <Form.Group controlId="rating" className="mt-3">
-                    <Form.Label className="fs-5">
-                      <b>Rating</b>
+                  <Form.Group controlId="rating" className="mt-3 d-flex">
+                    <Form.Label className="fs-5 p-2">
+                      <b>Rating : </b>
                     </Form.Label>
-                    <div className="d-flex">
+                    <div className="d-flex p-2 pb-3 align-items-center">
                       {[...Array(5)].map((star, index) => (
                         <FaStar
                           key={index}
                           color={index < rating ? "black" : "gray"}
                           onClick={() => handleStarClick(index)}
-                          style={{ cursor: "pointer" }}
+                          role="button"
                         />
                       ))}
                     </div>
                   </Form.Group>
-                  <Form.Group controlId="comment" className="mt-3">
-                    <Form.Label className="fs-5">
-                      <b>Comment</b>
+                  <Form.Group controlId="comment">
+                    <Form.Label className="fs-5 p-2">
+                      <b>Add Comment :</b>
                     </Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      required
-                    />
+                    <div className="p-2">
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        required
+                      />
+                    </div>
                   </Form.Group>
-                  <Button variant="dark" type="submit" className="mt-3">
+                  <Button variant="dark" type="submit" className="m-2">
                     Submit Review
                   </Button>
                 </Form>
@@ -350,9 +384,9 @@ const ProductDetails = () => {
         </div>
       </div>
       {similarProducts.length > 0 && (
-        <div className="m-2 p-2">
+        <div>
           <h3 className="m-2 p-4">Similar products For You :</h3>
-          <div className="d-flex flex-wrap gap-2 m-2 p-4">
+          <div className="d-flex flex-wrap gap-4 m-2 p-4 pt-2">
             {similarProducts.map((similarProduct) => (
               <ProductCard key={similarProduct.id} product={similarProduct} />
             ))}
